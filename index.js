@@ -9,6 +9,13 @@ const session = require('express-session');
 const expressHbs = require('express-handlebars');
 const SequelizeStore = require("connect-session-sequelize")(session.Store); // initalize sequelize with session store
 
+// import models to sync
+const User = require('./app/models/User');
+const Session = require('./app/models/Session');
+const Event = require('./app/models/Event');
+const EventPhotos = require('./app/models/EventPhotos');
+require('./app/models/associations');
+
 const app = express();
 const csrfProtection = csrf();
 const router = express.Router();

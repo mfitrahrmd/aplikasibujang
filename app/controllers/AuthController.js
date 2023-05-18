@@ -26,30 +26,30 @@ const oldInput = (req) => {
 	return oldInput;
 }
 
-exports.loginPage = (req, res, next) => {
+exports.signInPage = (req, res, next) => {
 	if(res.locals.isAuthenticated){
 		res.redirect('/');
 	} else {
-		res.render('login',{layout: 'login_layout', loginPage: true, pageTitle: 'Login', errorMessage: message(req), oldInput: oldInput(req)});
+		res.render('sign_in',{layout: 'sign_in_layout', loginPage: true, pageTitle: 'Login', errorMessage: message(req), oldInput: oldInput(req)});
 	}
 };
 
-exports.login = (req, res, next) => {
+exports.signIn = (req, res, next) => {
 	const validationErrors = [];
-	if (!validator.isEmail(req.body.inputEmail)) validationErrors.push('Please enter a valid email address.');
-	if (validator.isEmpty(req.body.inputPassword)) validationErrors.push('Password cannot be blank.');
+	if (!validator.isEmail(req.body.email)) validationErrors.push('Please enter a valid email address.');
+	if (validator.isEmpty(req.body.password)) validationErrors.push('Password cannot be blank.');
 	if (validationErrors.length) {
 		req.flash('error', validationErrors);
-		return res.redirect('/login');
+		return res.redirect('/sign-in');
 	}
 	User.findOne({
 		where: {
-			email: req.body.inputEmail
+			email: req.body.email
 		}
 	}).then(user => {
 		if(user) {
 			bcrypt
-				.compare(req.body.inputPassword, user.password)
+				.compare(req.body.password, user.password)
 				.then(doMatch => {
 					if (doMatch) {
 						req.session.isLoggedIn = true;
@@ -60,36 +60,36 @@ exports.login = (req, res, next) => {
 			            });
 					}
 					req.flash('error', 'Invalid email or password.');
-					req.flash('oldInput',{email: req.body.inputEmail});
-					return res.redirect('/login');
+					req.flash('oldInput',{email: req.body.email});
+					return res.redirect('/sign-in');
 				})
 				.catch(err => {
 					console.log(err);
 					req.flash('error', 'Sorry! Somethig went wrong.');
-					req.flash('oldInput',{email: req.body.inputEmail});
-					return res.redirect('/login');
+					req.flash('oldInput',{email: req.body.email});
+					return res.redirect('/sign-in');
 				});
 		} else {
 			req.flash('error', 'No user found with this email');
-			req.flash('oldInput',{email: req.body.inputEmail});
-			return res.redirect('/login');
+			req.flash('oldInput',{email: req.body.email});
+			return res.redirect('/sign-in');
 		}
 	})
 	.catch(err => console.log(err));
 };
 
-exports.logout = (req, res, next) => {
+exports.signOut = (req, res, next) => {
 	if(res.locals.isAuthenticated){
 		req.session.destroy(err => {
 			return res.redirect('/');
 		});
 	} else {
-		return res.redirect('/login');
+		return res.redirect('/sign-in');
 	}
 };
 
 exports.signUpPage = (req, res, next) => {
-	res.render('sign_up',{layout: 'login_layout', signUpPage: true, errorMessage: message(req), oldInput: oldInput(req)});
+	res.render('sign_up',{layout: 'sign_in_layout', signUpPage: true, errorMessage: message(req), oldInput: oldInput(req)});
 };
 
 exports.signUp = (req, res, next) => {
@@ -110,7 +110,7 @@ exports.signUp = (req, res, next) => {
 						return user.save();
 					})
 					.then(result => {
-						return res.redirect('/login');
+						return res.redirect('/sign-in');
 					});
 		} else {
 			req.flash('error', 'E-Mail exists already, please pick a different one.');
@@ -125,7 +125,7 @@ exports.forgotPasswordPage = (req, res, next) => {
 	if(res.locals.isAuthenticated){
 		return res.redirect('/');
 	} else {
-		return res.render('forgot_password',{layout: 'login_layout', loginPage: true, pageTitle: 'Forgot Password', errorMessage: message(req), oldInput: oldInput(req)});
+		return res.render('forgot_password',{layout: 'sign_in_layout', loginPage: true, pageTitle: 'Forgot Password', errorMessage: message(req), oldInput: oldInput(req)});
 	}
 };
 

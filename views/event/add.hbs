@@ -1,0 +1,25 @@
+<section>
+    <div class="container">
+        <div class="row justify-content-md-center h-100">
+            <div class="card">
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" action="/add-event/?_csrf={{csrfToken}}">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title">
+                </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label">Date</label>
+                    <input type="datetime-local" class="form-control" id="date">
+                </div>
+                <div class="mb-3">
+                    <label for="photos" class="form-label">Photos</label>
+                    <input type="file" multiple name="photos[]" id="photos">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+            </div>
+        </div>
+    </div>
+</section>
